@@ -1308,3 +1308,1326 @@ gsap.utils.toArray('.sec-title').forEach(el=>{
 </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DESIGN THINKING — Build. Innovate. Test. Transform.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#050B16;          /* city night base */
+  --panel:#0B1426;
+  --volt:#37D1FF;           /* electric cyan */
+  --amber:#FFB454;          /* signal amber */
+  --mint:#5CF2B8;           /* success green */
+  --rose:#FF6B8B;           /* risk red */
+  --violet:#8E7BFF;
+  --ink:#EBF3FF;
+  --ink-dim:#8FA3C7;
+  --glass:rgba(140,190,255,.06);
+  --glass-edge:rgba(140,190,255,.18);
+  --radius:18px;
+  --disp:'Space Grotesk',system-ui,sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:var(--body);color:var(--ink);background:var(--night);overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+::selection{background:var(--volt);color:#04111f}
+
+/* ---------- background ---------- */
+#stars{position:fixed;inset:0;z-index:0}
+.sky-glow{position:fixed;border-radius:50%;filter:blur(100px);opacity:.5;z-index:0;pointer-events:none;
+  transition:transform 1.2s cubic-bezier(.2,.8,.2,1), background 1.6s ease}
+#glowA{width:62vmax;height:62vmax;left:-22vmax;top:-26vmax;background:radial-gradient(circle,#0c3a5e,transparent 65%)}
+#glowB{width:56vmax;height:56vmax;right:-18vmax;bottom:-24vmax;background:radial-gradient(circle,#23145e,transparent 65%)}
+
+/* city skyline */
+#city{position:fixed;left:0;right:0;bottom:0;height:30vh;z-index:1;pointer-events:none;opacity:.9;transition:opacity 1s}
+#city svg{width:100%;height:100%;display:block}
+.win{fill:#0a1220}
+.win.lit{fill:var(--amber);opacity:.75;animation:flick 4s infinite}
+.win.lit.c{fill:var(--volt)}
+@keyframes flick{0%,92%,100%{opacity:.75}95%{opacity:.15}}
+/* drones */
+.drone{position:fixed;z-index:2;font-size:18px;pointer-events:none;opacity:.85;animation:dronefly linear infinite}
+@keyframes dronefly{0%{transform:translateX(-8vw) translateY(0)}50%{transform:translateX(50vw) translateY(-26px)}100%{transform:translateX(110vw) translateY(0)}}
+.drone::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:14px;background:linear-gradient(var(--volt),transparent)}
+
+#shutter{position:fixed;inset:0;background:#02060d;z-index:60;pointer-events:none;opacity:0;transition:opacity .55s ease}
+#shutter.on{opacity:1}
+
+#boot{position:fixed;inset:0;background:#02060d;z-index:70;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:14px;transition:opacity .8s ease}
+#boot .lab{font:600 11px/1 var(--disp);letter-spacing:.45em;color:var(--ink-dim);text-transform:uppercase}
+#boot .bar{width:220px;height:3px;background:rgba(140,190,255,.12);border-radius:99px;overflow:hidden}
+#boot .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--volt),var(--mint));transition:width .25s}
+#boot.gone{opacity:0;pointer-events:none}
+
+/* ---------- HUD ---------- */
+#hud{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;gap:12px;
+  padding:14px 20px;opacity:0;transform:translateY(-12px);transition:.6s ease;pointer-events:none}
+#hud.show{opacity:1;transform:none;pointer-events:auto}
+.hud-chip{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;
+  background:var(--glass);border:1px solid var(--glass-edge);backdrop-filter:blur(14px);font-size:13px}
+.hud-chip b{font-family:var(--disp)}
+#xpchip b{color:var(--amber)}
+#valchip b{color:var(--mint)}
+.tracker{display:flex;gap:6px;margin-left:auto;align-items:center;padding:8px 12px;border-radius:10px;
+  background:var(--glass);border:1px solid var(--glass-edge);backdrop-filter:blur(14px)}
+.tracker .dot{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;font:600 10px var(--disp);
+  color:var(--ink-dim);border:1px dashed rgba(140,190,255,.3);transition:.4s}
+.tracker .dot.done{background:linear-gradient(135deg,var(--volt),var(--mint));color:#04111f;border-color:transparent;
+  box-shadow:0 0 14px rgba(55,209,255,.55)}
+.tracker .dot.now{border:1px solid var(--volt);color:var(--volt);animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(55,209,255,.35)}50%{box-shadow:0 0 0 7px rgba(55,209,255,0)}}
+#badgewrap{display:flex;gap:6px}
+.badge{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:15px;
+  background:var(--glass);border:1px solid var(--glass-edge);filter:grayscale(1);opacity:.4;transition:.5s}
+.badge.won{filter:none;opacity:1;background:linear-gradient(135deg,rgba(255,180,84,.25),rgba(55,209,255,.25));
+  border-color:var(--amber);animation:badgepop .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes badgepop{0%{transform:scale(.2) rotate(-30deg)}100%{transform:scale(1) rotate(0)}}
+
+.xp-float{position:fixed;z-index:55;font:700 15px var(--disp);color:var(--amber);pointer-events:none;
+  text-shadow:0 2px 12px rgba(255,180,84,.6);animation:xpfly 1.1s ease forwards}
+.xp-float.green{color:var(--mint);text-shadow:0 2px 12px rgba(92,242,184,.6)}
+@keyframes xpfly{0%{opacity:0;transform:translateY(8px) scale(.7)}25%{opacity:1;transform:translateY(-6px) scale(1.1)}
+  100%{opacity:0;transform:translateY(-46px) scale(1)}}
+
+/* ---------- scenes ---------- */
+.scene{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;
+  padding:84px 24px 170px;opacity:0;pointer-events:none;transform:scale(1.04);
+  transition:opacity .7s ease,transform .7s ease;overflow-y:auto}
+.scene.active{opacity:1;pointer-events:auto;transform:scale(1)}
+.scene-inner{width:min(1040px,100%);margin:auto}
+.eyebrow{font:700 11px/1 var(--disp);letter-spacing:.35em;text-transform:uppercase;color:var(--volt);
+  display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--volt)}
+h1{font:700 clamp(36px,7.4vw,76px)/1 var(--disp);letter-spacing:-.03em}
+h2{font:700 clamp(24px,4vw,38px)/1.1 var(--disp);letter-spacing:-.02em;margin-bottom:8px}
+.lede{color:var(--ink-dim);font-size:clamp(14px,1.6vw,16.5px);line-height:1.65;max-width:580px}
+
+#scene-title .scene-inner{text-align:center;display:flex;flex-direction:column;align-items:center;gap:20px}
+.holo-title{position:relative;display:inline-block;opacity:0;transform:translateY(24px);transition:1s ease .2s}
+.holo-title.in{opacity:1;transform:none}
+.holo-title h1{background:linear-gradient(105deg,#fff 15%,var(--volt) 45%,var(--mint) 65%,#fff 95%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;background-size:220% 100%;animation:sheen 6s linear infinite}
+@keyframes sheen{to{background-position:-220% 0}}
+.tagline{font:600 clamp(13px,2vw,18px) var(--disp);letter-spacing:.28em;text-transform:uppercase;color:var(--amber)}
+.holo-title::after{content:"";position:absolute;left:8%;right:8%;bottom:-16px;height:24px;
+  background:radial-gradient(ellipse at center,rgba(55,209,255,.4),transparent 70%);filter:blur(6px)}
+.scanline{position:absolute;left:-4%;right:-4%;height:2px;background:linear-gradient(90deg,transparent,var(--volt),transparent);
+  opacity:.7;animation:scan 3.4s ease-in-out infinite}
+@keyframes scan{0%,100%{top:8%}50%{top:92%}}
+
+/* live ticker chart on title */
+#ticker{display:flex;gap:18px;align-items:flex-end;height:54px;margin-top:4px;opacity:.9}
+#ticker .bar{width:10px;border-radius:3px 3px 0 0;background:linear-gradient(180deg,var(--volt),rgba(55,209,255,.1));
+  animation:barwave 2.6s ease-in-out infinite}
+@keyframes barwave{0%,100%{transform:scaleY(.45)}50%{transform:scaleY(1)}}
+#ticker .bar{transform-origin:bottom}
+
+.cta{position:relative;border:none;border-radius:12px;padding:18px 46px;font:700 15px var(--disp);letter-spacing:.08em;
+  text-transform:uppercase;color:#04111f;background:linear-gradient(115deg,var(--volt),var(--mint));
+  box-shadow:0 10px 40px rgba(55,209,255,.4);transition:transform .25s,box-shadow .25s;overflow:hidden}
+.cta:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 16px 50px rgba(92,242,184,.5)}
+.cta:active{transform:scale(.98)}
+.cta:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.cta::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.5) 50%,transparent 70%);
+  transform:translateX(-120%);animation:ctasheen 3.2s ease infinite}
+@keyframes ctasheen{0%,60%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+
+.glass{background:var(--glass);border:1px solid var(--glass-edge);border-radius:var(--radius);
+  backdrop-filter:blur(16px);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+
+/* ---------- Round 1 ---------- */
+.persona-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:24px}
+.persona{padding:18px 14px;text-align:center;transition:.3s;position:relative;border-radius:var(--radius)}
+.persona:hover{transform:translateY(-6px);border-color:var(--volt)}
+.persona.solved{border-color:var(--mint);box-shadow:0 0 24px rgba(92,242,184,.2)}
+.persona .face{font-size:42px;display:block;margin-bottom:8px;animation:bob 4s ease-in-out infinite}
+.persona:nth-child(2) .face{animation-delay:.7s}.persona:nth-child(3) .face{animation-delay:1.4s}
+.persona:nth-child(4) .face{animation-delay:2.1s}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.persona b{font:700 14px var(--disp);display:block}
+.persona small{color:var(--ink-dim);font-size:11px}
+.persona .check{position:absolute;top:8px;right:10px;color:var(--mint);font-size:15px;opacity:0;transform:scale(0);transition:.4s}
+.persona.solved .check{opacity:1;transform:scale(1)}
+
+.dialog-panel{margin-top:20px;padding:24px;display:none}
+.dialog-panel.open{display:block;animation:rise .45s ease}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.quote{font-size:16px;line-height:1.65;border-left:3px solid var(--volt);padding-left:16px;margin:10px 0 18px}
+.opt{display:block;width:100%;text-align:left;margin-top:10px;padding:14px 16px;border-radius:12px;
+  background:rgba(140,190,255,.04);border:1px solid var(--glass-edge);color:var(--ink);font-size:14px;line-height:1.5;transition:.25s}
+.opt:hover{border-color:var(--volt);background:rgba(55,209,255,.08);transform:translateX(4px)}
+.opt.right{border-color:var(--mint);background:rgba(92,242,184,.12)}
+.opt.wrong{border-color:var(--rose);background:rgba(255,107,139,.1);animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.note-fly{position:fixed;z-index:56;padding:8px 14px;border-radius:8px;background:linear-gradient(135deg,var(--mint),#3ec98f);
+  color:#03241a;font:600 12px var(--disp);pointer-events:none;box-shadow:0 8px 24px rgba(92,242,184,.45)}
+#board{position:fixed;top:70px;right:26px;z-index:41;display:flex;flex-direction:column;gap:6px;align-items:flex-end;max-width:300px}
+.board-note{padding:6px 12px;border-radius:8px;font:600 11px var(--disp);color:#03241a;
+  background:linear-gradient(135deg,var(--mint),#3ec98f);box-shadow:0 0 18px rgba(92,242,184,.45);animation:rise .5s ease}
+#oppZone{display:none;margin-top:24px}
+#oppZone.open{display:block;animation:rise .5s ease}
+
+/* ---------- Round 2 ---------- */
+.define-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+.bucket{min-height:170px;padding:16px;border-radius:var(--radius);border:1.5px dashed rgba(140,190,255,.3);transition:.3s}
+.bucket h4{font:700 13px var(--disp);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+.bucket.b1 h4{color:var(--volt)}.bucket.b2 h4{color:var(--violet)}
+.bucket.glowok{border-style:solid;border-color:var(--mint);box-shadow:0 0 26px rgba(92,242,184,.2)}
+.bucket.armed{border-color:var(--volt);background:rgba(55,209,255,.05);cursor:pointer}
+.chip-pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;min-height:46px}
+.ichip{padding:10px 14px;border-radius:10px;background:rgba(140,190,255,.05);border:1px solid var(--glass-edge);
+  font-size:13px;transition:.25s;cursor:pointer;animation:chipfloat 5s ease-in-out infinite;color:var(--ink)}
+.ichip:nth-child(odd){animation-delay:1.4s}
+@keyframes chipfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.ichip:hover{border-color:var(--volt)}
+.ichip.sel{border-color:var(--amber);background:rgba(255,180,84,.13);box-shadow:0 0 14px rgba(255,180,84,.3);animation:none}
+.bucket .ichip{animation:none;cursor:default;margin:4px 4px 0 0;display:inline-block}
+.bucket .ichip.ok{border-color:var(--mint);background:rgba(92,242,184,.08)}
+#stmt-zone,#target-zone{display:none;margin-top:24px}
+#stmt-zone.open,#target-zone.open{display:block;animation:rise .5s ease}
+#crystal{display:none;margin:24px auto 0;width:110px;height:110px;position:relative}
+#crystal.on{display:block;animation:crysin 1.1s cubic-bezier(.2,1.4,.4,1)}
+#crystal i{position:absolute;inset:14px;background:linear-gradient(135deg,var(--volt),var(--violet),var(--mint));
+  clip-path:polygon(50% 0,100% 38%,80% 100%,20% 100%,0 38%);animation:spin3 5s linear infinite;filter:drop-shadow(0 0 22px rgba(55,209,255,.7))}
+@keyframes spin3{0%{transform:rotateY(0)}100%{transform:rotateY(360deg)}}
+@keyframes crysin{0%{transform:scale(0) rotate(-120deg)}100%{transform:scale(1) rotate(0)}}
+
+/* ---------- Round 3: model builder ---------- */
+.builder{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.bcol h5{font:700 11px var(--disp);letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px;text-align:center}
+.bcol:nth-child(1) h5{color:var(--volt)}.bcol:nth-child(2) h5{color:var(--violet)}.bcol:nth-child(3) h5{color:var(--amber)}
+.bcard{display:block;width:100%;padding:13px 12px;margin-bottom:10px;border-radius:12px;text-align:center;
+  font:600 12.5px/1.4 var(--disp);color:var(--ink);background:rgba(140,190,255,.05);border:1px solid var(--glass-edge);transition:.25s;cursor:pointer}
+.bcard:hover{border-color:var(--volt);transform:translateY(-3px)}
+.bcard.sel{border-color:var(--amber);background:rgba(255,180,84,.14);box-shadow:0 0 16px rgba(255,180,84,.35)}
+.bcard.spent{opacity:.3;pointer-events:none}
+.fuse-row{text-align:center;margin-top:14px}
+.fuse-eq{font:700 13px var(--disp);color:var(--ink-dim);min-height:22px;margin-bottom:12px}
+.models{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+.model{padding:16px 18px;border-radius:14px;border:1px solid var(--glass-edge);background:rgba(140,190,255,.05);
+  display:flex;gap:14px;align-items:flex-start;animation:burst .6s cubic-bezier(.3,1.5,.5,1);cursor:pointer;transition:.3s}
+.model:hover{border-color:var(--volt)}
+.model.strong{border-color:var(--mint);background:linear-gradient(120deg,rgba(92,242,184,.1),rgba(55,209,255,.08))}
+.model.chosen{border-color:var(--amber);box-shadow:0 0 24px rgba(255,180,84,.3)}
+@keyframes burst{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+.model .mtag{font:700 9.5px var(--disp);letter-spacing:.12em;padding:4px 9px;border-radius:6px;white-space:nowrap;
+  background:var(--volt);color:#04111f;text-transform:uppercase}
+.model.strong .mtag{background:var(--mint)}
+.model b{font-family:var(--disp);font-size:15px}
+.model p{font-size:12.5px;color:var(--ink-dim);margin-top:3px;line-height:1.5}
+.model .pick-hint{font:600 10px var(--disp);letter-spacing:.1em;color:var(--amber);text-transform:uppercase;margin-top:6px;display:none}
+.model.pickable .pick-hint{display:block}
+
+/* ---------- Round 4 ---------- */
+.deck{margin-top:20px;display:flex;flex-direction:column;gap:16px}
+.cat h5{font:700 12px var(--disp);letter-spacing:.15em;text-transform:uppercase;color:var(--volt);margin-bottom:8px}
+.cat-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.copt{padding:13px 14px;border-radius:12px;border:1px solid var(--glass-edge);background:rgba(140,190,255,.04);
+  cursor:pointer;transition:.25s;font-size:12.5px;line-height:1.45;text-align:left;color:var(--ink)}
+.copt:hover{border-color:var(--volt)}
+.copt b{display:block;font:700 12.5px var(--disp);margin-bottom:3px}
+.copt small{color:var(--ink-dim)}
+.copt.picked{border-color:var(--amber);background:rgba(255,180,84,.1);box-shadow:0 0 14px rgba(255,180,84,.2)}
+.copt.weakflag{border-color:var(--rose);background:rgba(255,107,139,.12);animation:shake .45s}
+#launchpad{margin-top:24px;display:none}
+#launchpad.open{display:block;animation:rise .5s ease}
+.machine{position:relative;margin:10px auto;width:min(460px,94%);padding:22px;border-radius:18px;
+  background:linear-gradient(165deg,#0e1a33,#070d1c);border:1px solid var(--glass-edge);overflow:hidden}
+.machine::before{content:"";position:absolute;inset:0;background:
+  repeating-linear-gradient(0deg,transparent 0 22px,rgba(55,209,255,.05) 22px 23px)}
+.slots{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative}
+.slot{min-height:58px;border-radius:10px;border:1.5px dashed rgba(140,190,255,.25);display:grid;place-items:center;
+  font:600 11px/1.35 var(--disp);text-align:center;padding:7px;color:var(--ink-dim);transition:.4s}
+.slot.wide{grid-column:1/-1}
+.slot.fill{border-style:solid;border-color:var(--volt);color:var(--ink);background:rgba(55,209,255,.08);
+  animation:slotin .5s cubic-bezier(.3,1.5,.5,1)}
+@keyframes slotin{0%{transform:scale(.4) rotate(6deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+.testers{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.tester{display:flex;gap:12px;padding:12px 14px;border-radius:12px;background:rgba(140,190,255,.05);
+  border:1px solid var(--glass-edge);font-size:13px;line-height:1.5;opacity:0;transform:translateY(10px);transition:.5s}
+.tester.in{opacity:1;transform:none}
+.tester .tface{font-size:24px}
+.tester.neg{border-color:rgba(255,107,139,.6)}
+.tester.pos{border-color:rgba(92,242,184,.5)}
+
+/* ---------- Arena ---------- */
+.score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:24px}
+.score-card{padding:18px 12px;text-align:center}
+.score-card .ring{width:92px;height:92px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;position:relative}
+.score-card .ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.score-card .ring b{font:700 22px var(--disp)}
+.score-card small{font:600 10.5px var(--disp);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim)}
+#level-banner{margin-top:26px;text-align:center;padding:30px 20px;position:relative;overflow:hidden}
+#level-banner .lvl{font:700 clamp(26px,4.6vw,42px)/1.1 var(--disp);
+  background:linear-gradient(110deg,var(--amber),var(--volt),var(--mint));-webkit-background-clip:text;background-clip:text;color:transparent}
+#cert{margin-top:18px;padding:26px;text-align:center;border:1px solid var(--amber);border-radius:var(--radius);
+  background:linear-gradient(160deg,rgba(255,180,84,.07),rgba(55,209,255,.06))}
+#cert input{background:transparent;border:none;border-bottom:1.5px dashed var(--glass-edge);color:var(--ink);
+  font:700 20px var(--disp);text-align:center;padding:6px 10px;outline:none;width:min(320px,80%)}
+#cert input:focus{border-color:var(--volt)}
+.cert-line{font:600 10px var(--disp);letter-spacing:.3em;text-transform:uppercase;color:var(--ink-dim);margin-top:14px}
+
+.confetti{position:fixed;width:9px;height:9px;z-index:58;pointer-events:none;border-radius:2px;animation:confall linear forwards}
+@keyframes confall{0%{transform:translateY(-10px) rotate(0)}100%{transform:translateY(105vh) rotate(720deg);opacity:.2}}
+
+/* ---------- Nova ---------- */
+#nova-dock{position:fixed;left:22px;bottom:14px;z-index:50;display:flex;align-items:flex-end;gap:14px;
+  transition:transform .9s cubic-bezier(.3,1,.3,1)}
+#nova{width:126px;height:156px;filter:drop-shadow(0 14px 22px rgba(0,0,0,.55));transition:transform .5s ease}
+#nova .breathe{animation:breathe 3.4s ease-in-out infinite;transform-origin:64px 110px}
+@keyframes breathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.012)}}
+#nova .armR{transform-origin:88px 86px;transition:transform .4s}
+#nova .armL{transform-origin:40px 86px;transition:transform .4s}
+#nova.wave .armR{animation:wavearm .9s ease-in-out 2}
+@keyframes wavearm{0%,100%{transform:rotate(0)}30%{transform:rotate(-130deg)}50%{transform:rotate(-100deg)}70%{transform:rotate(-130deg)}}
+#nova.point .armR{transform:rotate(-78deg)}
+#nova.think .armL{transform:rotate(95deg) translate(6px,-4px)}
+#nova.think .browL{transform:translateY(2px) rotate(-8deg)}
+#nova.celebrate{animation:hop .55s ease 2}
+#nova.celebrate .armR{transform:rotate(-150deg)}
+#nova.celebrate .armL{transform:rotate(150deg)}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-22px)}}
+#nova.confused{animation:tilt 1.1s ease}
+@keyframes tilt{0%,100%{transform:rotate(0)}30%{transform:rotate(-7deg)}65%{transform:rotate(5deg)}}
+#nova .mouth{transition:.2s}
+#nova.talk .mouth{animation:talkm .28s ease-in-out infinite}
+@keyframes talkm{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1.25)}}
+#nova .lid{transform-origin:center;transform:scaleY(0);transition:.08s}
+#nova.blink .lid{transform:scaleY(1)}
+#nova .pupils{transition:transform .25s ease}
+#nova .ring-glow{animation:ringpulse 2.6s ease-in-out infinite}
+@keyframes ringpulse{0%,100%{opacity:.55}50%{opacity:1}}
+#nova-bubble{position:relative;max-width:min(350px,58vw);margin-bottom:84px;padding:14px 18px;border-radius:14px 14px 14px 4px;
+  background:rgba(11,20,38,.94);border:1px solid var(--glass-edge);backdrop-filter:blur(12px);
+  font-size:13.5px;line-height:1.55;box-shadow:0 14px 40px rgba(0,0,0,.5);
+  opacity:0;transform:translateY(10px) scale(.96);transition:.35s ease}
+#nova-bubble.show{opacity:1;transform:none}
+#nova-bubble .who{font:700 10px var(--disp);letter-spacing:.22em;color:var(--volt);text-transform:uppercase;margin-bottom:5px;display:block}
+#nova-bubble::after{content:"";position:absolute;left:-7px;bottom:14px;width:14px;height:14px;
+  background:inherit;border-left:1px solid var(--glass-edge);border-bottom:1px solid var(--glass-edge);
+  transform:rotate(45deg);border-radius:0 0 0 4px}
+.thought-dots{position:fixed;z-index:51;display:none;gap:5px;left:126px;bottom:166px}
+.thought-dots.on{display:flex}
+.thought-dots i{width:8px;height:8px;border-radius:50%;background:var(--volt);animation:dotty 1s infinite}
+.thought-dots i:nth-child(2){animation-delay:.18s}.thought-dots i:nth-child(3){animation-delay:.36s}
+@keyframes dotty{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-7px);opacity:1}}
+
+footer-spacer{display:block;height:120px}
+
+@media (max-width:680px){
+  .scene{padding:78px 16px 210px}
+  #nova{width:90px;height:112px}
+  #nova-bubble{margin-bottom:54px;font-size:12.5px;max-width:62vw}
+  #nova-dock{left:12px;bottom:8px}
+  .define-grid,.builder{grid-template-columns:1fr}
+  #hud{flex-wrap:wrap;gap:8px;padding:10px 12px}
+  .tracker{margin-left:0}
+  #city{height:20vh}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.15s !important}
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<div class="sky-glow" id="glowA"></div>
+<div class="sky-glow" id="glowB"></div>
+
+<!-- digital city skyline -->
+<div id="city"></div>
+<span class="drone" style="top:22%;animation-duration:26s">🛸</span>
+<span class="drone" style="top:34%;animation-duration:34s;animation-delay:-14s">🛸</span>
+<span class="drone" style="top:14%;animation-duration:42s;animation-delay:-26s;font-size:13px">🛸</span>
+
+<div id="shutter"></div>
+
+<div id="boot">
+  <div class="lab">Innovation HQ · Powering Up</div>
+  <div class="bar"><i id="bootbar"></i></div>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="hud-chip" id="xpchip">⚡ <b id="xpval">0</b>&nbsp;XP</div>
+  <div class="hud-chip" id="valchip">📈 <b id="valval">₹0</b>&nbsp;valuation</div>
+  <div class="hud-chip" id="badgewrap-chip"><div id="badgewrap">
+    <div class="badge" id="bd-emp" title="Customer Whisperer">🎧</div>
+    <div class="badge" id="bd-def" title="Strategy Forger">💎</div>
+    <div class="badge" id="bd-ide" title="Model Maker">🧬</div>
+    <div class="badge" id="bd-pro" title="Launch Commander">🚀</div>
+    <div class="badge" id="bd-fin" title="Design Thinking Entrepreneur">🏆</div>
+  </div></div>
+  <div class="tracker" id="tracker">
+    <div class="dot" data-s="1" title="Empathy Valley">E</div>
+    <div class="dot" data-s="2" title="Define Mountain">D</div>
+    <div class="dot" data-s="3" title="Idea Forest">I</div>
+    <div class="dot" data-s="4" title="Prototype City">P</div>
+    <div class="dot" data-s="5" title="Business Arena">★</div>
+  </div>
+</div>
+
+<!-- research board (flying notes land here) -->
+<div id="board"></div>
+
+<!-- ===== SCENE: TITLE ===== -->
+<section class="scene" id="scene-title">
+  <div class="scene-inner">
+    <div class="eyebrow" style="justify-content:center">Innovation Headquarters · Sector 7</div>
+    <div class="holo-title" id="holoTitle">
+      <div class="scanline"></div>
+      <h1>DESIGN<br>THINKING</h1>
+    </div>
+    <div class="tagline">Build · Innovate · Test · Transform</div>
+    <div id="ticker"></div>
+    <p class="lede" style="margin:0 auto">You're not here to read about design thinking. You're here to found a startup, interview real customers, and ship a business that survives testing — with Nova, your AI business mentor, at your side.</p>
+    <button class="cta" id="startBtn">Start building</button>
+  </div>
+</section>
+
+<!-- ===== SCENE: MISSION ===== -->
+<section class="scene" id="scene-brief">
+  <div class="scene-inner" style="max-width:680px">
+    <div class="eyebrow">Founder briefing · Mission 01</div>
+    <h2>Build a sustainable food delivery startup.</h2>
+    <p class="lede">The city below eats badly, wastes mountains of food, and runs on chaotic deliveries. Investors believe one founder can fix all three. The board just transferred the mission to <b style="color:var(--ink)">you</b>.</p>
+    <div class="glass" style="margin-top:20px;padding:20px">
+      <p style="font-size:14px;line-height:1.75;color:var(--ink-dim)">Your build route:<br>
+      <b style="color:var(--volt)">Empathy Valley</b> → interview customers ·
+      <b style="color:var(--violet)">Define Mountain</b> → forge the opportunity ·
+      <b style="color:var(--amber)">Idea Forest</b> → assemble business models ·
+      <b style="color:var(--rose)">Prototype City</b> → build, launch & survive testing.</p>
+      <p style="font-size:12.5px;margin-top:12px;color:var(--ink-dim)">📈 Every smart decision raises your <b style="color:var(--mint)">startup valuation</b>. Weak decisions cost you. Choose like a founder.</p>
+    </div>
+    <button class="cta" style="margin-top:24px" id="briefBtn">Deploy to Empathy Valley</button>
+  </div>
+</section>
+
+<!-- ===== SCENE 1: EMPATHIZE ===== -->
+<section class="scene" id="scene-emp">
+  <div class="scene-inner">
+    <div class="eyebrow">Round 1 · Empathy Valley</div>
+    <h2>Founders who skip this round build products nobody wants.</h2>
+    <p class="lede">Four people of the city are living the problem right now. Interview each one, then log the finding that captures a real <b style="color:var(--mint)">pain point</b> — not a surface complaint.</p>
+    <div class="persona-row" id="personaRow"></div>
+    <div class="dialog-panel glass" id="dialogPanel">
+      <b id="dpName" style="font:700 16px var(--disp)"></b>
+      <p class="quote" id="dpQuote"></p>
+      <p style="font:600 11.5px var(--disp);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim)">What goes on the research board?</p>
+      <div id="dpOptions"></div>
+    </div>
+    <div id="oppZone">
+      <h2 style="font-size:clamp(20px,3vw,28px)">Your research board is glowing. Where's the biggest opportunity?</h2>
+      <p class="lede">A founder can't chase everything. Pick the opportunity hiding inside all four interviews.</p>
+      <div id="oppOptions" style="margin-top:12px"></div>
+    </div>
+    <button class="cta" id="empDone" style="display:none;margin-top:22px">Merge insights into the customer map</button>
+  </div>
+</section>
+
+<!-- ===== SCENE 2: DEFINE ===== -->
+<section class="scene" id="scene-def">
+  <div class="scene-inner">
+    <div class="eyebrow">Round 2 · Define Mountain</div>
+    <h2>Turn pain into a business opportunity.</h2>
+    <p class="lede">The strategy room loaded your research. Sort each finding onto its holo-board — tap a finding, then tap a board.</p>
+    <div class="chip-pool" id="chipPool"></div>
+    <div class="define-grid">
+      <div class="bucket glass b1" id="bucket1" data-b="demand"><h4>🍽️ Customers can't get what they need</h4><div class="bslot"></div></div>
+      <div class="bucket glass b2" id="bucket2" data-b="supply"><h4>📦 The supply side runs blind</h4><div class="bslot"></div></div>
+    </div>
+    <div id="stmt-zone">
+      <h2 style="font-size:clamp(20px,3vw,28px);margin-top:8px">Forge the problem statement.</h2>
+      <p class="lede">Weak: "People need food." Strong statements name the customer, the need, and the why. Choose the one that deserves the crystal.</p>
+      <div id="stmtOptions" style="margin-top:12px"></div>
+      <div id="crystal"><i></i></div>
+    </div>
+    <div id="target-zone">
+      <h2 style="font-size:clamp(20px,3vw,26px)">Lock your target customer.</h2>
+      <p class="lede">Who does version one serve? "Everyone" is how startups die.</p>
+      <div id="targetOptions" style="margin-top:12px"></div>
+    </div>
+    <button class="cta" id="defDone" style="display:none;margin-top:22px">Carry the crystal to Idea Forest</button>
+  </div>
+</section>
+
+<!-- ===== SCENE 3: IDEATE ===== -->
+<section class="scene" id="scene-ide">
+  <div class="scene-inner">
+    <div class="eyebrow">Round 3 · Idea Forest</div>
+    <h2>Product + Technology + Customer need = Business model.</h2>
+    <p class="lede">The innovation chambers are open. Pick <b style="color:var(--volt)">one card from each column</b> and fuse them. Build <b style="color:var(--mint)">two business models</b>, then choose the one your startup will bet on.</p>
+    <div class="builder" id="builder"></div>
+    <div class="fuse-row">
+      <div class="fuse-eq" id="fuseEq">Pick one card from each column…</div>
+      <button class="cta" id="fuseBtn" disabled>⚡ Fuse business model</button>
+    </div>
+    <div class="models" id="modelList"></div>
+    <button class="cta" id="ideDone" style="display:none;margin-top:20px">Take this model to Prototype City</button>
+  </div>
+</section>
+
+<!-- ===== SCENE 4: PROTOTYPE ===== -->
+<section class="scene" id="scene-pro">
+  <div class="scene-inner">
+    <div class="eyebrow">Round 4 · Prototype City</div>
+    <h2>Assemble the launch version of <span id="chosenModelName" style="color:var(--volt)">your startup</span>.</h2>
+    <p class="lede">Five founding decisions: product, business model, customer experience, marketing, technology. One choice per category — the fabricator builds in real time.</p>
+    <div class="deck" id="deck"></div>
+    <button class="cta" id="buildBtn" style="margin-top:22px" disabled>Launch prototype (5 decisions needed)</button>
+    <div id="launchpad">
+      <div class="machine">
+        <p style="font:700 11px var(--disp);letter-spacing:.2em;text-transform:uppercase;color:var(--volt);margin-bottom:12px;position:relative">Startup Fabricator · v1.0</p>
+        <div class="slots" id="slotGrid">
+          <div class="slot wide" id="slot0">product</div>
+          <div class="slot" id="slot1">business model</div><div class="slot" id="slot2">experience</div>
+          <div class="slot" id="slot3">marketing</div><div class="slot" id="slot4">technology</div>
+        </div>
+      </div>
+      <div class="testers" id="testerList"></div>
+      <div id="improveZone" style="display:none;margin-top:16px">
+        <p class="lede"><b style="color:var(--rose)">The market pushed back.</b> Tap the flagged decision above to pivot — every great startup iterates.</p>
+      </div>
+      <button class="cta" id="proDone" style="display:none;margin-top:18px">Enter the Business Arena</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SCENE 5: ARENA ===== -->
+<section class="scene" id="scene-fin">
+  <div class="scene-inner">
+    <div class="eyebrow">Final · Business Arena</div>
+    <h2>The board reviews your company.</h2>
+    <div class="score-grid" id="scoreGrid"></div>
+    <div class="glass" id="level-banner">
+      <p style="font:600 11px var(--disp);letter-spacing:.3em;text-transform:uppercase;color:var(--ink-dim)">Founder rank unlocked</p>
+      <div class="lvl" id="levelName">—</div>
+      <p class="lede" style="margin:8px auto 0;max-width:500px" id="levelDesc"></p>
+    </div>
+    <div id="cert">
+      <p class="cert-line" style="margin-top:0">Founder's certificate · Design Thinking</p>
+      <p style="margin:14px 0 6px;color:var(--ink-dim);font-size:13px">This certifies that</p>
+      <input id="certName" placeholder="type your name" maxlength="32">
+      <p style="margin-top:10px;color:var(--ink-dim);font-size:13px">founded <b style="color:var(--volt)" id="certCo">a startup</b>, reached a valuation of <b style="color:var(--mint)" id="certVal">₹0</b> and earned <b style="color:var(--amber)"><span id="certXP">0</span> XP</b>.</p>
+      <p class="cert-line">Empathize · Define · Ideate · Prototype · Test</p>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:22px;flex-wrap:wrap">
+      <button class="cta" id="replayBtn">Found another startup</button>
+    </div>
+    <footer-spacer></footer-spacer>
+  </div>
+</section>
+
+<!-- ===== NOVA ===== -->
+<div class="thought-dots" id="thoughtDots"><i></i><i></i><i></i></div>
+<div id="nova-dock">
+  <svg id="nova" viewBox="0 0 128 158" aria-label="Nova, your AI business mentor">
+    <g class="breathe">
+      <ellipse cx="64" cy="150" rx="30" ry="6" fill="rgba(0,0,0,.45)"/>
+      <g class="legs">
+        <rect x="50" y="118" width="10" height="22" rx="5" fill="#19233E"/>
+        <rect x="68" y="118" width="10" height="22" rx="5" fill="#19233E"/>
+        <ellipse cx="55" cy="142" rx="9" ry="5" fill="#37D1FF"/>
+        <ellipse cx="73" cy="142" rx="9" ry="5" fill="#37D1FF"/>
+      </g>
+      <g class="armL">
+        <rect x="30" y="84" width="12" height="30" rx="6" fill="#19233E"/>
+        <circle cx="36" cy="116" r="7" fill="#37D1FF"/>
+      </g>
+      <g class="armR">
+        <rect x="86" y="84" width="12" height="30" rx="6" fill="#19233E"/>
+        <circle cx="92" cy="116" r="7" fill="#37D1FF"/>
+      </g>
+      <rect x="40" y="76" width="48" height="50" rx="18" fill="url(#bodyGrad)"/>
+      <!-- tie: business mentor detail -->
+      <path d="M64 78 l5 7 -5 16 -5 -16 z" fill="#FFB454"/>
+      <circle cx="64" cy="104" r="7" fill="#04111F"/>
+      <circle cx="64" cy="104" r="4.4" fill="#5CF2B8" class="ring-glow"/>
+      <circle cx="64" cy="46" r="34" fill="url(#headGrad)" stroke="rgba(160,210,255,.3)" stroke-width="1.5"/>
+      <ellipse cx="50" cy="30" rx="10" ry="6" fill="rgba(255,255,255,.3)"/>
+      <g class="face">
+        <g class="pupils" id="pupils">
+          <circle cx="52" cy="46" r="5.5" fill="#EBF3FF"/>
+          <circle cx="76" cy="46" r="5.5" fill="#EBF3FF"/>
+          <circle cx="52" cy="46" r="2.6" fill="#04111F"/>
+          <circle cx="76" cy="46" r="2.6" fill="#04111F"/>
+        </g>
+        <rect class="lid" x="45" y="40" width="14" height="12" rx="6" fill="#101A30"/>
+        <rect class="lid" x="69" y="40" width="14" height="12" rx="6" fill="#101A30"/>
+        <rect class="browL" x="46" y="33" width="12" height="3" rx="1.5" fill="#EBF3FF" opacity=".8"/>
+        <rect class="browR" x="70" y="33" width="12" height="3" rx="1.5" fill="#EBF3FF" opacity=".8"/>
+        <rect class="mouth" x="58" y="58" width="12" height="5" rx="2.5" fill="#37D1FF"/>
+      </g>
+      <line x1="64" y1="12" x2="64" y2="4" stroke="#37D1FF" stroke-width="2.5"/>
+      <circle cx="64" cy="3.5" r="3.5" fill="#FFB454" class="ring-glow"/>
+    </g>
+    <defs>
+      <linearGradient id="headGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#16224A"/><stop offset="1" stop-color="#0B1228"/>
+      </linearGradient>
+      <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#233060"/><stop offset="1" stop-color="#121A3A"/>
+      </linearGradient>
+    </defs>
+  </svg>
+  <div id="nova-bubble"><span class="who">Nova · AI mentor</span><span id="novaText"></span></div>
+</div>
+<script>
+/* ================= state ================= */
+const S = {
+  xp:0, val:0, stage:0,
+  scores:{cu:0, pd:0, inn:0, pq:0, mp:0},
+  empSolved:0, empAttempts:0, oppRight:false,
+  defAttempts:0, stmtAttempts:0, targetRight:false,
+  models:[], chosenModel:null,
+  picks:{}, improved:false,
+  idleTimer:null, talkTimer:null, bubbleTimer:null
+};
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const fmtVal = v => v >= 10000000 ? '₹'+(v/10000000).toFixed(1)+' Cr' : '₹'+(v/100000).toFixed(1)+' L';
+
+/* ================= skyline ================= */
+(function buildCity(){
+  let svg = `<svg viewBox="0 0 1200 220" preserveAspectRatio="xMidYMax slice">`;
+  let x = 0, seed = 7;
+  const rnd = ()=> (seed = (seed*9301+49297)%233280)/233280;
+  while(x < 1200){
+    const w = 36 + rnd()*70, h = 60 + rnd()*150, y = 220 - h;
+    svg += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#070F1E" stroke="rgba(55,209,255,.12)" stroke-width="1"/>`;
+    if(rnd() > .55) svg += `<rect x="${x+w*.3}" y="${y-8}" width="2" height="8" fill="#37D1FF" opacity=".8"/>`;
+    for(let wy = y+10; wy < 210; wy += 16){
+      for(let wx = x+6; wx < x+w-8; wx += 13){
+        const lit = rnd() > .6;
+        svg += `<rect class="win ${lit ? (rnd()>.5?'lit c':'lit') : ''}" x="${wx}" y="${wy}" width="6" height="8" style="animation-delay:${(rnd()*5).toFixed(1)}s"/>`;
+      }
+    }
+    x += w + 8 + rnd()*22;
+  }
+  svg += `</svg>`;
+  $('#city').innerHTML = svg;
+})();
+
+/* ================= starfield + particles ================= */
+const cv = $('#stars'), cx = cv.getContext('2d');
+let stars = [], motes = [];
+function sizeCanvas(){ cv.width = innerWidth; cv.height = innerHeight; }
+sizeCanvas(); addEventListener('resize', sizeCanvas);
+for(let i=0;i<130;i++) stars.push({x:Math.random(),y:Math.random()*.8,r:Math.random()*1.4+.3,tw:Math.random()*6.3,sp:.4+Math.random()});
+for(let i=0;i<30;i++) motes.push({x:Math.random(),y:Math.random(),r:Math.random()*2.4+.8,vy:-(.06+Math.random()*.12),vx:(Math.random()-.5)*.05,hue:Math.random()<.5?'55,209,255':'92,242,184',a:.1+Math.random()*.22});
+let px=0, py=0;
+addEventListener('mousemove', e=>{ px=(e.clientX/innerWidth-.5); py=(e.clientY/innerHeight-.5); novaEyes(e); pokeIdle(); });
+addEventListener('touchstart', pokeIdle, {passive:true});
+function drawBG(t){
+  cx.clearRect(0,0,cv.width,cv.height);
+  for(const s of stars){
+    const a = .3 + .7*Math.abs(Math.sin(t/900*s.sp + s.tw));
+    cx.fillStyle = `rgba(235,243,255,${a*.75})`;
+    cx.beginPath(); cx.arc(s.x*cv.width + px*18, s.y*cv.height + py*12, s.r, 0, 7); cx.fill();
+  }
+  for(const m of motes){
+    m.y += m.vy/100; m.x += m.vx/100;
+    if(m.y < -0.05){ m.y = 1.05; m.x = Math.random(); }
+    if(m.x < -0.05) m.x = 1.05; if(m.x > 1.05) m.x = -0.05;
+    cx.fillStyle = `rgba(${m.hue},${m.a})`;
+    cx.beginPath(); cx.arc(m.x*cv.width + px*40, m.y*cv.height + py*26, m.r, 0, 7); cx.fill();
+  }
+  $('#glowA').style.transform = `translate(${px*-30}px,${py*-20}px)`;
+  $('#glowB').style.transform = `translate(${px*30}px,${py*20}px)`;
+  requestAnimationFrame(drawBG);
+}
+requestAnimationFrame(drawBG);
+
+const moods = {
+  'scene-title':['#0c3a5e','#23145e'], 'scene-brief':['#0c3a5e','#23145e'],
+  'scene-emp':['#5e3a14','#0c3a5e'], 'scene-def':['#1d2a6e','#0c4a52'],
+  'scene-ide':['#0e5436','#23145e'], 'scene-pro':['#5e1437','#1d2a6e'],
+  'scene-fin':['#5e4a0c','#0c3a5e']
+};
+function setMood(id){
+  const [a,b] = moods[id] || moods['scene-title'];
+  $('#glowA').style.background = `radial-gradient(circle, ${a}, transparent 65%)`;
+  $('#glowB').style.background = `radial-gradient(circle, ${b}, transparent 65%)`;
+}
+
+/* title ticker bars */
+(function(){ const t = $('#ticker');
+  for(let i=0;i<14;i++){ const b=document.createElement('i'); b.className='bar';
+    b.style.height=(14+Math.random()*40)+'px'; b.style.animationDelay=(i*.16)+'s';
+    if(i%4===3) b.style.background='linear-gradient(180deg,var(--mint),rgba(92,242,184,.1))';
+    t.appendChild(b);} })();
+
+/* ================= Nova engine ================= */
+const nova = $('#nova'), bubble = $('#nova-bubble'), novaTxt = $('#novaText');
+function novaEyes(e){
+  const r = nova.getBoundingClientRect();
+  const cxm = r.left + r.width*.5, cym = r.top + r.height*.32;
+  const dx = Math.max(-1, Math.min(1, (e.clientX - cxm)/300));
+  const dy = Math.max(-1, Math.min(1, (e.clientY - cym)/300));
+  $('#pupils').style.transform = `translate(${dx*3.4}px, ${dy*2.6}px)`;
+}
+setInterval(()=>{ nova.classList.add('blink'); setTimeout(()=>nova.classList.remove('blink'), 130); }, 3300 + Math.random()*1400);
+function novaPose(pose, ms=1600){
+  ['wave','point','think','celebrate','confused'].forEach(p=>nova.classList.remove(p));
+  if(pose){ nova.classList.add(pose); if(ms) setTimeout(()=>nova.classList.remove(pose), ms); }
+  $('#thoughtDots').classList.toggle('on', pose==='think');
+  if(pose!=='think') $('#thoughtDots').classList.remove('on');
+}
+function novaSay(text, pose, hold){
+  clearTimeout(S.bubbleTimer); clearInterval(S.talkTimer);
+  if(pose!==undefined) novaPose(pose, pose==='think'?2600:1600);
+  bubble.classList.add('show'); nova.classList.add('talk');
+  novaTxt.textContent = '';
+  let i = 0;
+  S.talkTimer = setInterval(()=>{
+    novaTxt.textContent = text.slice(0, ++i);
+    if(i >= text.length){ clearInterval(S.talkTimer); nova.classList.remove('talk');
+      S.bubbleTimer = setTimeout(()=>bubble.classList.remove('show'), hold || (2600 + text.length*28));
+    }
+  }, 14);
+}
+const nudges = [
+  "Need a little help?",
+  "Let's analyze the situation together.",
+  "Great businesses start with understanding people.",
+  "Investors are patient. Markets aren't. Shall we?",
+  "Take your time -- but the city's still hungry."
+];
+function pokeIdle(){
+  clearTimeout(S.idleTimer);
+  if(S.stage===0) return;
+  S.idleTimer = setTimeout(()=>{ novaSay(nudges[Math.floor(Math.random()*nudges.length)], 'wave'); pokeIdle(); }, 26000);
+}
+document.addEventListener('mouseover', e=>{
+  if(e.target.closest('.cta, .opt, .bcard, .copt, .model')) { if(!nova.classList.contains('celebrate')) novaPose('point', 900); }
+});
+
+/* ================= XP / valuation / badges / confetti ================= */
+function gainXP(n, x, y){
+  S.xp += n; $('#xpval').textContent = S.xp;
+  const f = document.createElement('div'); f.className='xp-float'; f.textContent = `+${n} XP`;
+  f.style.left = (x ?? innerWidth*.5)+'px'; f.style.top = (y ?? innerHeight*.4)+'px';
+  document.body.appendChild(f); setTimeout(()=>f.remove(), 1200);
+}
+function gainVal(n, x, y){
+  S.val = Math.max(0, S.val + n); $('#valval').textContent = fmtVal(S.val);
+  const f = document.createElement('div'); f.className='xp-float green';
+  f.textContent = (n>=0?'+':'−') + fmtVal(Math.abs(n)).replace('₹','₹');
+  f.style.left = ((x ?? innerWidth*.5)+60)+'px'; f.style.top = (y ?? innerHeight*.42)+'px';
+  document.body.appendChild(f); setTimeout(()=>f.remove(), 1200);
+}
+function winBadge(id){ const b = $('#bd-'+id); if(b && !b.classList.contains('won')) b.classList.add('won'); }
+function confetti(n=70){
+  const colors = ['#FFB454','#37D1FF','#5CF2B8','#8E7BFF','#EBF3FF'];
+  for(let i=0;i<n;i++){
+    const c = document.createElement('i'); c.className='confetti';
+    c.style.left = Math.random()*100+'vw'; c.style.top='-12px';
+    c.style.background = colors[i%colors.length];
+    c.style.animationDuration = (1.6+Math.random()*1.8)+'s';
+    c.style.animationDelay = Math.random()*.5+'s';
+    if(Math.random()<.4) c.style.borderRadius='50%';
+    document.body.appendChild(c); setTimeout(()=>c.remove(), 4200);
+  }
+}
+function burst(x, y){
+  for(let i=0;i<14;i++){
+    const p = document.createElement('i'); p.className='confetti';
+    p.style.left=x+'px'; p.style.top=y+'px'; p.style.position='fixed';
+    p.style.background = i%2 ? 'var(--volt)' : 'var(--mint)';
+    p.style.animation='none'; p.style.borderRadius='50%';
+    document.body.appendChild(p);
+    const a = Math.random()*Math.PI*2, d = 40+Math.random()*70;
+    p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px) scale(.2)`,opacity:0}],{duration:650+Math.random()*300,easing:'cubic-bezier(.2,.8,.3,1)'}).onfinish=()=>p.remove();
+  }
+}
+
+/* ================= routing ================= */
+function goScene(id, stageNum, onIn){
+  $('#shutter').classList.add('on');
+  $('#nova-dock').style.transform = 'translateX(40vw)';
+  setTimeout(()=>{
+    $$('.scene').forEach(s=>s.classList.remove('active'));
+    $('#'+id).classList.add('active');
+    $('#'+id).scrollTop = 0;
+    setMood(id);
+    if(stageNum !== undefined){
+      S.stage = stageNum;
+      $$('.tracker .dot').forEach(d=>{
+        const n = +d.dataset.s;
+        d.classList.toggle('done', n < stageNum);
+        d.classList.toggle('now', n === stageNum);
+      });
+    }
+    $('#shutter').classList.remove('on');
+    $('#nova-dock').style.transform = 'translateX(0)';
+    if(onIn) setTimeout(onIn, 650);
+    pokeIdle();
+  }, 600);
+}
+
+/* ================= boot + opening ================= */
+let bootP = 0;
+const bootInt = setInterval(()=>{
+  bootP = Math.min(100, bootP + 9 + Math.random()*14);
+  $('#bootbar').style.width = bootP + '%';
+  if(bootP >= 100){
+    clearInterval(bootInt);
+    setTimeout(()=>{
+      $('#boot').classList.add('gone');
+      $('#scene-title').classList.add('active');
+      setMood('scene-title');
+      $('#nova-dock').style.transform = 'translateX(-60vw)';
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{ $('#nova-dock').style.transform = 'translateX(0)'; }));
+      setTimeout(()=>{
+        $('#holoTitle').classList.add('in');
+        novaSay("Welcome to Design Thinking. Today you will build a business -- from an idea to a tested solution. I'm Nova, your mentor. Press Start building.", 'wave');
+      }, 1100);
+    }, 350);
+  }
+}, 140);
+
+$('#startBtn').onclick = ()=>{
+  $('#hud').classList.add('show');
+  gainXP(10); gainVal(100000);
+  goScene('scene-brief', 0, ()=> novaSay("Your mission, founder. Read it twice -- everything we build flows from it.", 'point'));
+};
+$('#briefBtn').onclick = ()=>{
+  goScene('scene-emp', 1, ()=>{ initEmpathy(); novaSay("Empathy Valley. Most founders start with their idea. We start with their people. Tap someone and really listen.", 'point'); });
+};
+</script>
+<script>
+/* ================= ROUND 1 ================= */
+const personas = [
+  { id:'student', face:'🧑‍🎓', name:'Zoya', role:'Student, hostel life',
+    quote:"I study till 1 a.m. and that's exactly when I'm starving. By then it's greasy leftovers or instant noodles -- the third night in a row. Healthy food after 10 p.m. basically doesn't exist here.",
+    options:[
+      {t:"Zoya should cook meals in advance on weekends.", ok:false, why:"That's advice, not research. In Empathy Valley we collect understanding, not solutions."},
+      {t:"Zoya's real hunger window opens exactly when healthy options shut down.", ok:true, chip:"Healthy options vanish exactly when Zoya needs them", b:'demand', v:300000},
+      {t:"Zoya eats instant noodles sometimes.", ok:false, why:"Surface fact. The pain is in the timing mismatch -- listen again."}
+    ]},
+  { id:'pro', face:'👩‍💼', name:'Aarav', role:'Working professional',
+    quote:"I get 30 minutes for lunch. The healthy places take 50 minutes to deliver and cost like a small festival. So I eat whatever arrives fast -- and feel like a sandbag by 4 p.m.",
+    options:[
+      {t:"Aarav doesn't care about his health.", ok:false, why:"He clearly does -- he's frustrated he can't act on it. Don't invent attitudes."},
+      {t:"Healthy food fails Aarav on the two things he can't flex: time and price.", ok:true, chip:"For Aarav, healthy = too slow AND too pricey", b:'demand', v:300000},
+      {t:"Aarav has short lunch breaks.", ok:false, why:"True, but it's only half the picture. What collides with that short break?"}
+    ]},
+  { id:'owner', face:'👨‍🍳', name:'Priya', role:'Restaurant owner',
+    quote:"Every night I throw away food that was perfectly good at 7 p.m. Demand is a mystery -- Tuesday I run out by 8, Wednesday I bin half my stock. I'm cooking blindfolded.",
+    options:[
+      {t:"Priya wastes good food because she can't see demand coming.", ok:true, chip:"Priya cooks blind -- unpredictable demand creates waste", b:'supply', v:300000},
+      {t:"Priya should simply cook less food.", ok:false, why:"Then she runs out on busy days. The problem is visibility, not volume -- re-listen."},
+      {t:"Priya throws away food at night.", ok:false, why:"That's the symptom. The insight is WHY it happens."}
+    ]},
+  { id:'rider', face:'🛵', name:'Karan', role:'Delivery partner',
+    quote:"I do five trips to the same tower in one hour -- separately. Then nothing for two hours, then chaos again. The routes make no sense and my fuel money disappears into the zigzag.",
+    options:[
+      {t:"Karan burns time and fuel because orders aren't batched or routed smartly.", ok:true, chip:"Karan's trips overlap & spike -- zero smart routing", b:'supply', v:300000},
+      {t:"Karan should buy an electric scooter.", ok:false, why:"A fix, not a finding. And it wouldn't touch the zigzag problem."},
+      {t:"Karan is sometimes idle between orders.", ok:false, why:"Half the story -- the waste in the busy hours is the louder pain."}
+    ]}
+];
+const opps = [
+  {t:"Build a premium late-night dessert delivery brand for students.", ok:false,
+   why:"That serves one slice of one interview. Three of your four interviews go unanswered."},
+  {t:"Connect surplus restaurant food to people who need fast, affordable healthy meals -- with smarter routing in between.", ok:true},
+  {t:"Launch a cooking-class app so customers stop needing delivery.", ok:false,
+   why:"Interesting -- but it ignores Priya's waste, Karan's routes, and Aarav's 30 minutes. The opportunity should connect the pains."}
+];
+let currentPersona = null;
+function initEmpathy(){
+  const row = $('#personaRow'); row.innerHTML = '';
+  personas.forEach(p=>{
+    const d = document.createElement('button');
+    d.className = 'persona glass'; d.id = 'pp-'+p.id;
+    d.innerHTML = `<span class="check">✔</span><span class="face">${p.face}</span><b>${p.name}</b><small>${p.role}</small>`;
+    d.onclick = ()=> openPersona(p);
+    row.appendChild(d);
+  });
+}
+function openPersona(p){
+  if($('#pp-'+p.id).classList.contains('solved')){ novaSay(`${p.name}'s finding is already on the research board. Interview someone new.`, 'point'); return; }
+  currentPersona = p;
+  $('#dpName').textContent = `${p.face} ${p.name} · ${p.role}`;
+  $('#dpQuote').textContent = '“' + p.quote + '”';
+  const wrap = $('#dpOptions'); wrap.innerHTML = '';
+  p.options.forEach(o=>{
+    const b = document.createElement('button'); b.className='opt'; b.textContent = o.t;
+    b.onclick = (ev)=> answerEmpathy(o, b, ev);
+    wrap.appendChild(b);
+  });
+  $('#dialogPanel').classList.add('open');
+  $('#dialogPanel').scrollIntoView({behavior:'smooth', block:'nearest'});
+  novaSay(`Interview mode. Don't note what ${p.name} said -- note what it *means* for the business.`, 'think', 4200);
+}
+function answerEmpathy(o, btn, ev){
+  if(o.ok){
+    btn.classList.add('right');
+    S.empSolved++;
+    gainXP(30, ev.clientX, ev.clientY); gainVal(o.v, ev.clientX, ev.clientY);
+    $('#pp-'+currentPersona.id).classList.add('solved');
+    const n = document.createElement('div'); n.className='note-fly'; n.textContent = '📌 ' + o.chip;
+    n.style.left = ev.clientX+'px'; n.style.top = ev.clientY+'px';
+    document.body.appendChild(n);
+    requestAnimationFrame(()=>{ n.style.transition='all .9s cubic-bezier(.3,.8,.3,1)';
+      n.style.left=(innerWidth-200)+'px'; n.style.top='80px'; n.style.opacity='0'; n.style.transform='scale(.6)'; });
+    setTimeout(()=>{ n.remove();
+      const note = document.createElement('div'); note.className='board-note'; note.textContent='📌 '+o.chip;
+      $('#board').appendChild(note);
+    }, 880);
+    const praise = ["Logged. That's a finding with money in it.","Exactly -- you heard the business problem under the complaint.","Research board: growing. Investors love this part.","Sharp ears, founder."];
+    novaSay(praise[S.empSolved % praise.length] + (S.empSolved<4 ? ` ${4-S.empSolved} interview${4-S.empSolved>1?'s':''} left.` : ""), 'celebrate');
+    setTimeout(()=>{ $('#dialogPanel').classList.remove('open'); }, 900);
+    if(S.empSolved === 4){
+      setTimeout(()=>{
+        $('#oppZone').classList.add('open');
+        $('#oppZone').scrollIntoView({behavior:'smooth', block:'nearest'});
+        novaSay("Four interviews, four pains. Now the founder question: where do they overlap? Pick the biggest opportunity.", 'think', 5200);
+        renderOpps();
+      }, 1400);
+    }
+  } else {
+    btn.classList.add('wrong'); S.empAttempts++;
+    gainVal(-50000, ev.clientX, ev.clientY);
+    setTimeout(()=>btn.classList.remove('wrong'), 500);
+    novaSay("Hmm. " + o.why, 'think', 5200);
+  }
+}
+function renderOpps(){
+  const w = $('#oppOptions'); w.innerHTML='';
+  opps.forEach(o=>{
+    const b = document.createElement('button'); b.className='opt'; b.textContent=o.t;
+    b.onclick = (ev)=>{
+      if(o.ok){
+        b.classList.add('right'); S.oppRight = true;
+        gainXP(40, ev.clientX, ev.clientY); gainVal(500000, ev.clientX, ev.clientY);
+        $$('#oppOptions .opt').forEach(x=>{ if(x!==b) x.style.opacity='.35'; x.onclick=null; });
+        $('#empDone').style.display='inline-block';
+        novaSay("YES. One opportunity, four pains answered. THAT is pattern recognition. Merge the board into the customer map.", 'celebrate');
+      } else {
+        S.empAttempts++; b.classList.add('wrong'); gainVal(-100000, ev.clientX, ev.clientY);
+        setTimeout(()=>b.classList.remove('wrong'), 500);
+        novaSay(o.why, 'think', 5600);
+      }
+    };
+    w.appendChild(b);
+  });
+}
+$('#empDone').onclick = ()=>{
+  S.scores.cu = Math.max(50, 100 - S.empAttempts*8);
+  winBadge('emp'); confetti(50);
+  novaSay("Customer map: formed and glowing. Great businesses solve real human problems -- and now we know ours. To the mountain!", 'celebrate');
+  setTimeout(()=> goScene('scene-def', 2, ()=>{
+    initDefine();
+    novaSay("Define Mountain -- the strategy floor. Sort each finding onto the board where it belongs. Tap a finding, then a board.", 'point');
+  }), 1700);
+};
+
+/* ================= ROUND 2 ================= */
+const chips = [
+  {t:"Healthy options vanish exactly when Zoya needs them", b:'demand'},
+  {t:"For Aarav, healthy = too slow AND too pricey", b:'demand'},
+  {t:"Lunch & midnight demand spikes go unserved", b:'demand'},
+  {t:"Priya cooks blind -- unpredictable demand creates waste", b:'supply'},
+  {t:"Karan's trips overlap & spike -- zero smart routing", b:'supply'},
+  {t:"Perfectly good surplus food gets binned nightly", b:'supply'}
+];
+const stmts = [
+  {t:"People in the city need food.", ok:false,
+   why:"Weak. True of every city since cities existed. A statement this wide can't aim a business."},
+  {t:"Busy professionals and students need affordable healthy meals delivered fast -- while restaurants waste the very food that could feed them.", ok:true},
+  {t:"The city needs our AI-powered food delivery app with smart routing.", ok:false,
+   why:"That's your solution in a trench coat. Problem statements never name the product."}
+];
+const targets = [
+  {t:"🌍 Everyone who eats food in the city", ok:false, why:"\"Everyone\" means a product built for no one. Focus wins beachheads."},
+  {t:"🎯 Busy professionals + late-night students", ok:true},
+  {t:"✈️ Tourists visiting on weekends", ok:false, why:"They weren't in a single interview. Build on the pain you actually found."}
+];
+let selChip = null, sorted = 0;
+function initDefine(){
+  $('#board').innerHTML = '';
+  const pool = $('#chipPool'); pool.innerHTML = '';
+  chips.forEach(c=>{
+    const el = document.createElement('button'); el.className='ichip'; el.textContent='📌 '+c.t; el.dataset.b=c.b;
+    el.onclick = ()=>{
+      $$('.chip-pool .ichip').forEach(x=>x.classList.remove('sel'));
+      el.classList.add('sel'); selChip = el;
+      $$('.bucket').forEach(b=>b.classList.add('armed'));
+      novaPose('point', 800);
+    };
+    pool.appendChild(el);
+  });
+  $$('.bucket').forEach(b=>{
+    b.onclick = (ev)=>{
+      if(!selChip){ novaSay("Pick a finding first, then tap its board.", 'think', 3000); return; }
+      if(b.dataset.b === selChip.dataset.b){
+        selChip.classList.remove('sel'); selChip.classList.add('ok');
+        b.querySelector('.bslot').appendChild(selChip);
+        selChip.onclick = null; selChip = null; sorted++;
+        gainXP(20, ev.clientX, ev.clientY); gainVal(150000, ev.clientX, ev.clientY);
+        $$('.bucket').forEach(x=>x.classList.remove('armed'));
+        if(sorted === chips.length){
+          $$('.bucket').forEach(x=>x.classList.add('glowok'));
+          novaSay("Patterns found: a starving demand side and a blindfolded supply side. Connect those two and you have a company. Forge the statement.", 'celebrate');
+          openStatement();
+        } else novaPose('celebrate', 900);
+      } else {
+        S.defAttempts++; gainVal(-50000, ev.clientX, ev.clientY);
+        selChip.classList.add('sel');
+        b.style.borderColor = 'var(--rose)';
+        setTimeout(()=>b.style.borderColor='', 600);
+        novaSay("Read it once more -- is this about customers not *getting* what they need, or the supply side running *blind*?", 'think', 5200);
+      }
+    };
+  });
+}
+function openStatement(){
+  const z = $('#stmt-zone'); z.classList.add('open');
+  const w = $('#stmtOptions'); w.innerHTML='';
+  stmts.sort(()=>Math.random()-.5).forEach(s=>{
+    const b = document.createElement('button'); b.className='opt'; b.textContent=s.t;
+    b.onclick = (ev)=>{
+      if(s.ok){
+        b.classList.add('right'); gainXP(40, ev.clientX, ev.clientY); gainVal(700000, ev.clientX, ev.clientY);
+        $('#crystal').classList.add('on');
+        $$('#stmtOptions .opt').forEach(x=>{ if(x!==b) x.style.opacity='.35'; x.onclick=null; });
+        novaSay("Customer ✓ need ✓ reason ✓ -- and no product hiding inside. The statement crystallized. Now we know what problem our business will solve.", 'celebrate');
+        setTimeout(openTarget, 1300);
+      } else {
+        S.stmtAttempts++; b.classList.add('wrong'); gainVal(-100000, ev.clientX, ev.clientY);
+        setTimeout(()=>b.classList.remove('wrong'), 500);
+        novaSay(s.why, 'think', 5600);
+      }
+    };
+    w.appendChild(b);
+  });
+  setTimeout(()=>z.scrollIntoView({behavior:'smooth', block:'nearest'}), 300);
+}
+function openTarget(){
+  const z = $('#target-zone'); z.classList.add('open');
+  const w = $('#targetOptions'); w.innerHTML='';
+  targets.forEach(t=>{
+    const b = document.createElement('button'); b.className='opt'; b.textContent=t.t;
+    b.onclick = (ev)=>{
+      if(t.ok){
+        b.classList.add('right'); S.targetRight = true;
+        gainXP(30, ev.clientX, ev.clientY); gainVal(500000, ev.clientX, ev.clientY);
+        $$('#targetOptions .opt').forEach(x=>{ if(x!==b) x.style.opacity='.35'; x.onclick=null; });
+        S.scores.pd = Math.max(50, 100 - (S.defAttempts + S.stmtAttempts)*8);
+        winBadge('def'); confetti(40);
+        $('#defDone').style.display='inline-block';
+        novaSay("Target locked: the exact people from your interviews. The mountain approves. The forest is next -- bring your imagination.", 'celebrate');
+      } else {
+        S.stmtAttempts++; b.classList.add('wrong'); gainVal(-100000, ev.clientX, ev.clientY);
+        setTimeout(()=>b.classList.remove('wrong'), 500);
+        novaSay(t.why, 'think', 5200);
+      }
+    };
+    w.appendChild(b);
+  });
+  setTimeout(()=>z.scrollIntoView({behavior:'smooth', block:'nearest'}), 300);
+}
+$('#defDone').onclick = ()=> goScene('scene-ide', 3, ()=>{
+  initIdeate();
+  novaSay("The Idea Forest! Product plus technology plus customer need -- fuse them and business models grow on trees here. Literally. Pick one card per column.", 'wave');
+});
+</script>
+<script>
+/* ================= ROUND 3 · model builder ================= */
+const cols = [
+  {key:'prod', title:'Product', cards:[
+    {id:'surplus', t:'🍱 Surplus-meal marketplace'},
+    {id:'subs', t:'🥗 Healthy meal subscriptions'},
+    {id:'cloud', t:'🏭 Late-night cloud kitchen'}
+  ]},
+  {key:'tech', title:'Technology', cards:[
+    {id:'predict', t:'🔮 AI demand prediction'},
+    {id:'routes', t:'🗺️ Smart route batching'},
+    {id:'perso', t:'🤖 Personalization engine'}
+  ]},
+  {key:'need', title:'Customer need', cards:[
+    {id:'fastcheap', t:'⚡ Affordable, healthy, fast'},
+    {id:'latenight', t:'🌙 Late-night availability'},
+    {id:'zerowaste', t:'♻️ Zero-waste values'}
+  ]}
+];
+const modelNames = {
+  'surplus+predict+fastcheap': {n:'FreshLoop', d:'Restaurants list tonight\'s surplus; AI predicts tomorrow\'s demand so they cook right -- customers get healthy meals at honest prices.', strong:true},
+  'surplus+routes+zerowaste':  {n:'ZeroMile', d:'Surplus meals batched onto smart routes -- food rescued, fuel saved, the greenest plate in the city.', strong:true},
+  'surplus+predict+zerowaste': {n:'SecondServe', d:'Prediction shrinks waste before it happens; whatever remains becomes affordable rescued meals.', strong:true},
+  'cloud+routes+latenight':    {n:'MoonKitchen', d:'A late-night cloud kitchen with batched routes -- hot, healthy food at 1 a.m. without the chaos.', strong:true},
+  'subs+perso+fastcheap':      {n:'DailyDabba', d:'Personalized healthy subscriptions tuned to budget and schedule -- lunch that lands inside Aarav\'s 30 minutes.', strong:true},
+  'subs+predict+fastcheap':    {n:'PlanPlate', d:'Subscriptions give restaurants predictable demand; predictability makes meals cheaper. Everyone wins.', strong:true},
+  'cloud+perso+latenight':     {n:'NightOwl Eats', d:'A midnight kitchen that learns what each night-studier craves.', strong:false},
+  'subs+routes+zerowaste':     {n:'GreenTiffin', d:'Subscription tiffins on optimized loops -- steady, sustainable, a little sleepy on innovation.', strong:false},
+  'surplus+perso+latenight':   {n:'Rescue Bites', d:'Personalized surplus deals for night owls -- charming, but supply at midnight is thin.', strong:false},
+  'cloud+predict+fastcheap':   {n:'SmartStove', d:'A predictive kitchen for cheap healthy meals -- solid, though it leaves Priya\'s waste on the table.', strong:false}
+};
+let sel = {prod:null, tech:null, need:null};
+function initIdeate(){
+  const b = $('#builder'); b.innerHTML='';
+  cols.forEach(c=>{
+    const col = document.createElement('div'); col.className='bcol';
+    col.innerHTML = `<h5>${c.title}</h5>`;
+    c.cards.forEach(card=>{
+      const el = document.createElement('button'); el.className='bcard'; el.id='bc-'+card.id; el.textContent=card.t;
+      el.onclick = ()=>{
+        if(el.classList.contains('spent')) return;
+        $$('#builder .bcol').forEach((cc,i)=>{ if(cols[i].key===c.key) cc.querySelectorAll('.bcard').forEach(x=>x.classList.remove('sel')); });
+        el.classList.add('sel'); sel[c.key] = card;
+        updateFuse();
+      };
+      col.appendChild(el);
+    });
+    b.appendChild(col);
+  });
+  $('#modelList').innerHTML=''; sel={prod:null,tech:null,need:null};
+}
+function updateFuse(){
+  const ready = sel.prod && sel.tech && sel.need;
+  $('#fuseBtn').disabled = !ready;
+  $('#fuseEq').textContent = ready
+    ? `${sel.prod.t}  +  ${sel.tech.t}  +  ${sel.need.t}  =  ?`
+    : 'Pick one card from each column…';
+}
+$('#fuseBtn').onclick = (ev)=>{
+  const key = `${sel.prod.id}+${sel.tech.id}+${sel.need.id}`;
+  const m = modelNames[key] || {n:'Hybrid Venture', d:`A fusion of ${sel.prod.t.slice(2).toLowerCase()}, ${sel.tech.t.slice(2).toLowerCase()} and ${sel.need.t.slice(2).toLowerCase()}.`, strong:false};
+  ['prod','tech','need'].forEach(k=>{ const el=$('#bc-'+sel[k].id); el.classList.remove('sel'); el.classList.add('spent'); });
+  burst(ev.clientX, ev.clientY);
+  const card = document.createElement('div'); card.className = 'model'+(m.strong?' strong':'');
+  card.innerHTML = `<span class="mtag">${m.strong?'⚡ high potential':'model'}</span>
+    <div><b>${m.n}</b><p>${m.d}</p><span class="pick-hint">tap to bet on this model →</span></div>`;
+  m.el = card;
+  $('#modelList').appendChild(card);
+  S.models.push(m);
+  gainXP(m.strong?45:30, ev.clientX, ev.clientY); gainVal(m.strong?800000:400000, ev.clientX, ev.clientY);
+  sel = {prod:null,tech:null,need:null}; updateFuse();
+  if(S.models.length < 2){
+    novaSay(m.strong
+      ? `"${m.n}" -- now THAT has legs. One more model so we have options. Strategy means choosing between good things.`
+      : `"${m.n}" -- workable. Build one more; let's see if you can find a sharper combination.`, 'celebrate');
+  } else {
+    $('#fuseBtn').style.display='none';
+    S.models.forEach(mm=>{
+      mm.el.classList.add('pickable');
+      mm.el.onclick = ()=> chooseModel(mm);
+    });
+    novaSay("Two models on the table. Founders don't keep options forever -- tap the one your startup will bet on.", 'point');
+  }
+};
+function chooseModel(m){
+  S.chosenModel = m;
+  S.models.forEach(x=>{ x.el.classList.remove('chosen','pickable'); x.el.onclick=null; });
+  m.el.classList.add('chosen');
+  S.scores.inn = 55 + S.models.filter(x=>x.strong).length*15 + (m.strong?15:0);
+  winBadge('ide'); confetti(45);
+  gainXP(30); gainVal(m.strong?1000000:300000);
+  $('#ideDone').style.display='inline-block';
+  novaSay(m.strong
+    ? `"${m.n}" -- great ideas become great businesses when they solve real problems, and this one solves several. Prototype City, here we come.`
+    : `"${m.n}" it is. Not the boldest play on the table -- but execution can outwork strategy. Let's build it well.`, m.strong?'celebrate':'think');
+}
+$('#ideDone').onclick = ()=> goScene('scene-pro', 4, ()=>{
+  $('#chosenModelName').textContent = '“'+S.chosenModel.n+'”';
+  $('#certCo').textContent = S.chosenModel.n;
+  initProto();
+  novaSay(`Prototype City. We assemble "${S.chosenModel.n}" v1 right here -- five founding decisions, then real customers test it. No pressure. Some pressure.`, 'point');
+});
+
+/* ================= ROUND 4 ================= */
+const cats = [
+  {key:'product', title:'🍱 Core product', opts:[
+    {t:'Tonight\'s rescue menu', d:'Live surplus meals at honest prices, refreshed hourly.', v:3},
+    {t:'Chef-story video feed', d:'Beautiful mini-documentaries about each restaurant.', v:1},
+    {t:'NFT loyalty meal cards', d:'Collectible digital meal tokens.', v:0, weak:true, fb:'too complicated'}
+  ]},
+  {key:'biz', title:'💰 Business model', opts:[
+    {t:'Pay-per-order + small restaurant fee', d:'Cheap to try, fair to partners, scales with trust.', v:3},
+    {t:'Premium-only membership, ₹1999/mo', d:'Exclusive access for those who can pay.', v:0, weak:true, fb:'too expensive'},
+    {t:'Free for all, ads everywhere', d:'No revenue from food; banner ads pay the bills.', v:1}
+  ]},
+  {key:'cx', title:'🤝 Customer experience', opts:[
+    {t:'2-tap ordering, no account needed', d:'Phone number in, food out. Grandparent-proof.', v:3},
+    {t:'10-step onboarding questionnaire', d:'Deep personalization… after 10 screens of forms.', v:0, weak:true, fb:'too complicated'},
+    {t:'Chat-only ordering via support agents', d:'A human types your order for you.', v:1}
+  ]},
+  {key:'mkt', title:'📣 Marketing', opts:[
+    {t:'Campus & office pilot programs', d:'Start exactly where your target customers live and work.', v:3},
+    {t:'City-wide billboard blitz', d:'Maximum eyeballs, maximum burn rate.', v:1},
+    {t:'Celebrity brand film', d:'One glorious ad, half the runway gone.', v:0, weak:true, fb:'too expensive'}
+  ]},
+  {key:'tech', title:'⚙️ Technology', opts:[
+    {t:'Demand prediction + route batching', d:'The engine that kills waste and zigzag routes.', v:3},
+    {t:'AR menu previews', d:'Spin a 3D biryani above your desk.', v:0, weak:true, fb:'too complicated'},
+    {t:'Basic website + spreadsheets', d:'Scrappy and honest; creaks at scale.', v:1}
+  ]}
+];
+const pivots = {
+  product:{t:'Tonight\'s rescue menu', d:'Pivoted after testing: customers wanted the food, not the gimmick.', v:3},
+  biz:{t:'Pay-per-order + small restaurant fee', d:'Pivoted after testing: priced for students AND professionals.', v:3},
+  cx:{t:'2-tap ordering, no account needed', d:'Pivoted after testing: friction deleted.', v:3},
+  mkt:{t:'Campus & office pilot programs', d:'Pivoted after testing: aimed at the actual target.', v:3},
+  tech:{t:'Demand prediction + route batching', d:'Pivoted after testing: the engine the model needed.', v:3}
+};
+let testPhase = 0;
+function initProto(){
+  S.picks = {}; testPhase = 0; S.improved = false;
+  $('#launchpad').classList.remove('open');
+  $('#testerList').innerHTML=''; $('#improveZone').style.display='none'; $('#proDone').style.display='none';
+  const d = $('#deck'); d.innerHTML='';
+  cats.forEach(c=>{
+    const sec = document.createElement('div'); sec.className='cat';
+    sec.innerHTML = `<h5>${c.title}</h5>`;
+    const grid = document.createElement('div'); grid.className='cat-opts';
+    c.opts.forEach(o=>{
+      const el = document.createElement('button'); el.className='copt';
+      el.innerHTML = `<b>${o.t}</b><small>${o.d}</small>`;
+      el.onclick = ()=>{
+        if(testPhase>0) return;
+        grid.querySelectorAll('.copt').forEach(x=>x.classList.remove('picked'));
+        el.classList.add('picked');
+        S.picks[c.key] = {...o, cat:c.key, el, grid};
+        const n = Object.keys(S.picks).length;
+        $('#buildBtn').disabled = n !== 5;
+        $('#buildBtn').textContent = n===5 ? '🚀 Launch prototype' : `Launch prototype (${5-n} decision${5-n>1?'s':''} left)`;
+      };
+      grid.appendChild(el);
+    });
+    sec.appendChild(grid); d.appendChild(sec);
+  });
+  $('#buildBtn').disabled = true; $('#buildBtn').style.display='';
+  $('#buildBtn').textContent = 'Launch prototype (5 decisions needed)';
+}
+const slotOrder = ['product','biz','cx','mkt','tech'];
+$('#buildBtn').onclick = ()=>{
+  testPhase = 1;
+  $('#buildBtn').style.display='none';
+  $('#launchpad').classList.add('open');
+  slotOrder.forEach((k,i)=>{
+    setTimeout(()=>{
+      const s = $('#slot'+i); s.classList.add('fill'); s.textContent = S.picks[k].t;
+      gainXP(12);
+    }, 350 + i*380);
+  });
+  setTimeout(()=>{
+    $('#launchpad').scrollIntoView({behavior:'smooth', block:'nearest'});
+    novaSay("v1.0 assembled and live in the testing district. Virtual customers incoming -- whatever they say, remember: feedback is free consulting.", 'celebrate');
+    runTesters();
+  }, 350 + 5*380 + 400);
+};
+function runTesters(){
+  const list = $('#testerList'); list.innerHTML='';
+  const weakPicks = Object.values(S.picks).filter(p=>p.weak);
+  const fb = [];
+  fb.push({f:'🧑‍🎓', n:'Zoya', pos:true, t:`Ordered at 12:40 a.m. -- real food, real fast. "This solves my problem." Direct quote. From me. Just now.`});
+  fb.push({f:'👨‍🍳', n:'Priya', pos:true, t:`First week ever I didn't bin a single tray. Whatever your machine predicts, it predicts well.`});
+  if(weakPicks.length){
+    const w = weakPicks[0];
+    const line = w.fb === 'too expensive'
+      ? `I did the math on "${w.t}" -- ${w.fb}. I earn a salary, not a treasury. I'm out until this changes.`
+      : `I tried "${w.t}" three times and gave up. ${w.fb[0].toUpperCase()+w.fb.slice(1)}. I just want food, not a puzzle.`;
+    fb.push({f:'👩‍💼', n:'Aarav', pos:false, t:line});
+  } else {
+    fb.push({f:'👩‍💼', n:'Aarav', pos:false, t:`Honestly? It works. But one of these choices is the weakest link -- a sharper option exists and your competitors will find it.`});
+  }
+  fb.forEach((x,i)=>{
+    const t = document.createElement('div'); t.className='tester '+(x.pos?'pos':'neg');
+    t.innerHTML = `<span class="tface">${x.f}</span><div><b style="font:700 12px var(--disp)">${x.n}</b><br>${x.t}</div>`;
+    list.appendChild(t);
+    setTimeout(()=>t.classList.add('in'), 500 + i*800);
+  });
+  setTimeout(()=>{
+    testPhase = 2;
+    const weak = weakPicks[0] || Object.values(S.picks).reduce((a,b)=> a.v <= b.v ? a : b);
+    S.weakOne = weak;
+    $('#improveZone').style.display='block';
+    weak.el.classList.add('weakflag');
+    weak.el.onclick = ()=> doImprove(weak);
+    novaSay("Hear that? That's not failure -- that's a map. Tap the flagged decision and pivot. Iteration IS the method.", 'point');
+  }, 500 + fb.length*800 + 900);
+}
+function doImprove(weak){
+  if(testPhase !== 2) return;
+  testPhase = 3; S.improved = true;
+  const piv = pivots[weak.cat];
+  weak.el.classList.remove('weakflag','picked'); weak.el.style.opacity='.35'; weak.el.onclick=null;
+  S.picks[weak.cat] = {...piv, cat:weak.cat};
+  const idx = slotOrder.indexOf(weak.cat);
+  const s = $('#slot'+idx); s.classList.remove('fill');
+  setTimeout(()=>{ s.classList.add('fill'); s.textContent = piv.t; }, 250);
+  gainXP(50); gainVal(1500000);
+  const base = Object.values(S.picks).reduce((a,p)=>a+p.v,0); // max 15
+  S.scores.pq = Math.min(100, Math.round(base/15*78) + 22);
+  winBadge('pro'); confetti(55);
+  const t = document.createElement('div'); t.className='tester pos in';
+  t.innerHTML = `<span class="tface">👩‍💼</span><div><b style="font:700 12px var(--disp)">Aarav</b><br>"Okay. NOW it fits my lunch break and my wallet. Tell the founder they actually listen -- rare species."</div>`;
+  $('#testerList').appendChild(t);
+  $('#proDone').style.display='inline-block';
+  novaSay("v1.1 shipped -- built, tested, improved. That loop you just ran? Founders pay consultants crores to learn it. The Arena awaits.", 'celebrate');
+}
+$('#proDone').onclick = ()=> goScene('scene-fin', 5, finale);
+
+/* ================= FINALE ================= */
+function finale(){
+  if(!S.scores.pq){ const base = Object.values(S.picks).reduce((a,p)=>a+p.v,0); S.scores.pq = Math.round(base/15*78); }
+  S.scores.mp = Math.min(100, 40 + (S.chosenModel.strong?25:8) + (S.targetRight?15:0) + (S.picks.biz && S.picks.biz.v===3?15:0) + (S.improved?5:0));
+  const overall = Math.round((S.scores.cu + S.scores.pd + S.scores.inn + S.scores.pq + S.scores.mp)/5);
+  const data = [
+    {k:'Customer understanding', v:S.scores.cu, c:'#FFB454'},
+    {k:'Problem definition', v:S.scores.pd, c:'#8E7BFF'},
+    {k:'Innovation level', v:S.scores.inn, c:'#37D1FF'},
+    {k:'Prototype quality', v:S.scores.pq, c:'#5CF2B8'},
+    {k:'Market potential', v:S.scores.mp, c:'#FF6B8B'},
+    {k:'Business success', v:overall, c:'#EBF3FF'}
+  ];
+  const g = $('#scoreGrid'); g.innerHTML='';
+  data.forEach((d,i)=>{
+    const card = document.createElement('div'); card.className='score-card glass';
+    const circ = 2*Math.PI*40;
+    card.innerHTML = `<div class="ring">
+      <svg width="92" height="92"><circle cx="46" cy="46" r="40" fill="none" stroke="rgba(140,190,255,.1)" stroke-width="6"/>
+      <circle class="arc" cx="46" cy="46" r="40" fill="none" stroke="${d.c}" stroke-width="6" stroke-linecap="round"
+        stroke-dasharray="${circ}" stroke-dashoffset="${circ}"/></svg>
+      <b>0</b></div><small>${d.k}</small>`;
+    g.appendChild(card);
+    setTimeout(()=>{
+      card.querySelector('.arc').style.transition = 'stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)';
+      card.querySelector('.arc').style.strokeDashoffset = circ*(1 - d.v/100);
+      const bEl = card.querySelector('b'); let n=0;
+      const ti = setInterval(()=>{ n+=2; if(n>=d.v){n=d.v; clearInterval(ti);} bEl.textContent=n; }, 24);
+    }, 300 + i*220);
+  });
+  const lvls = [
+    [0,  'Beginner Entrepreneur','You shipped a real venture end to end. Run it again -- your founder instincts compound fast.'],
+    [62, 'Creative Builder','Strong listening, real ideas, a business that works. The city is eating better because of you.'],
+    [78, 'Innovation Strategist','Sharp research, a high-potential model, smart pivots. Investors are circling.'],
+    [90, 'Design Thinking Master','A near-flawless founding run. You didn\'t study design thinking -- you ran a company on it.']
+  ];
+  const lvl = lvls.filter(l=>overall>=l[0]).pop();
+  setTimeout(()=>{
+    $('#levelName').textContent = lvl[1];
+    $('#levelDesc').textContent = lvl[2];
+    $('#certXP').textContent = S.xp;
+    gainVal(overall*100000);
+    $('#certVal').textContent = fmtVal(S.val);
+    winBadge('fin'); confetti(130); gainXP(100);
+    novaSay(`${lvl[1]} -- business success score ${overall}. ${S.chosenModel.n} went from a stranger's complaint to a tested company. I'd invest. Sign your certificate, founder.`, 'celebrate');
+  }, 1900);
+}
+$('#replayBtn').onclick = ()=> location.reload();
+addEventListener('keydown', e=>{ if(e.key==='Enter' && S.stage===0 && $('#scene-title').classList.contains('active')) $('#startBtn').click(); pokeIdle(); });
+</script>
+</body>
+</html>
